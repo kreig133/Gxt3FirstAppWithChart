@@ -47,29 +47,4 @@ public class RGauss {
         return ( next >  ( matOzhidanie + razbros ) ) && ( next < ( matOzhidanie - razbros ) ) ? 
                 ( next > matOzhidanie ? ( matOzhidanie + razbros ) : ( matOzhidanie - razbros ) ) : next ;
     }
-
-    public static void main( String[] args ) {
-        RGauss rGauss = new RGauss( 900.0, 50.0 );
-        double[] massiv = new double[1000000];
-
-        double  sum = 0.0;
-        for ( int i = 0; i < massiv.length; i++ ) {
-            massiv[i] = rGauss.next();
-            sum += massiv[i];
-        }
-
-        double M = sum/massiv.length;
-
-        double otklSum = 0.0;
-
-        for ( int i = 0; i < massiv.length; i++ ) {
-            otklSum += ( M - massiv[i]) * ( M - massiv[i]);
-        }
-
-        double q = otklSum / massiv.length;
-
-        System.out.println( "M = " + M );
-        System.out.println( "q = " + q );
-        System.out.println( "3б = " + ( Math.sqrt( q ) * 3 ) );
-    }
 }

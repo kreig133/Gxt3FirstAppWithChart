@@ -21,25 +21,4 @@ public class RExponenta {
     public double next(){
         return  ( min - M ) * Math.log( rand.nextDouble() ) + min;
     }
-
-    public static void main( String[] args ) {
-        final RExponenta rExponenta = new RExponenta( 200, 50 );
-
-        double[] range = new double[1000000];
-
-        double sum = 0.0;
-        double min = Double.MAX_VALUE;
-        double max = Double.MIN_VALUE;
-        for ( int i = 0; i < range.length; i++ ) {
-            sum += ( range[ i ] = rExponenta.next() );
-            if ( min > range[ i ] ) min = range[ i ];
-            if ( max < range[ i ] ) max = range[ i ];
-        }
-
-        double mOzhid = sum / range.length;
-
-        System.out.println( "mOzhid = " + mOzhid );
-        System.out.println( "max = " + max );
-        System.out.println( "min = " + min );
-    }
 }
