@@ -1,0 +1,38 @@
+<ui:UiBinder
+        xmlns:ui="urn:ui:com.google.gwt.uibinder"
+        xmlns:g="urn:import:com.google.gwt.user.client.ui"
+        xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+        xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
+        xmlns:tabs="urn:import:com.sencha.gxt.widget.core.client"
+        xmlns:my="urn:import:com.kreig133.gxt.svdiplom.client.charts"
+        xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
+        >
+    <ui:with type="com.sencha.gxt.widget.core.client.TabItemConfig" field="mainTabConfig">
+        <ui:attributes text="Графики" />
+    </ui:with>
+
+    <ui:with type="com.sencha.gxt.widget.core.client.TabItemConfig" field="dataTabConfig">
+        <ui:attributes text="Данные" />
+    </ui:with>
+
+    <ui:with type="com.sencha.gxt.widget.core.client.grid.GridView" field="view">
+        <ui:attributes stripeRows="true" autoFill="true"/>
+    </ui:with>
+
+    <ui:with type="com.sencha.gxt.widget.core.client.grid.ColumnModel" field="cm"/>
+    <ui:with type="com.sencha.gxt.data.shared.ListStore" field="store"/>
+
+    <container:FlowLayoutContainer>
+        <tabs:TabPanel ui:field="folder" width="100%" addStyleNames="margin-10" tabScroll="true">
+            <tabs:child config="{mainTabConfig}">
+                <my:LineExample ui:field="chart"/>
+            </tabs:child>
+
+            <tabs:child config="{dataTabConfig}">
+                <container:FlowLayoutContainer scrollMode="ALWAYS">
+                    <grid:Grid store="{store}" cm="{cm}" view="{view}" ui:field="dataTable"  />
+                </container:FlowLayoutContainer>
+            </tabs:child>
+        </tabs:TabPanel>
+    </container:FlowLayoutContainer>
+</ui:UiBinder>
