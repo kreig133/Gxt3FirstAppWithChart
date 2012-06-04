@@ -2,22 +2,34 @@
         xmlns:ui="urn:ui:com.google.gwt.uibinder"
         xmlns:g="urn:import:com.google.gwt.user.client.ui"
         xmlns:button="urn:import:com.sencha.gxt.widget.core.client.button"
+        xmlns:form="urn:import:com.sencha.gxt.widget.core.client.form"
         xmlns:container="urn:import:com.sencha.gxt.widget.core.client.container"
         xmlns:tabs="urn:import:com.sencha.gxt.widget.core.client"
         xmlns:my="urn:import:com.kreig133.gxt.svdiplom.client.charts"
         xmlns:grid="urn:import:com.sencha.gxt.widget.core.client.grid"
+        xmlns:toolbar="urn:import:com.sencha.gxt.widget.core.client.toolbar"
         >
+    <ui:style>
+        .svTempText{
+            font-family: monospace;
+            font-size: 2em;
+            background-color: #d3d3d3;
+            border: black solid;
+        }
+    </ui:style>
     <ui:with type="com.sencha.gxt.widget.core.client.TabItemConfig" field="mainTabConfig">
-        <ui:attributes text="Графики" />
+        <ui:attributes text="Графики"/>
     </ui:with>
 
     <ui:with type="com.sencha.gxt.widget.core.client.TabItemConfig" field="dataTabConfig">
-        <ui:attributes text="Данные" />
+        <ui:attributes text="Данные"/>
     </ui:with>
 
     <ui:with type="com.sencha.gxt.widget.core.client.grid.GridView" field="view">
         <ui:attributes stripeRows="true" autoFill="true"/>
     </ui:with>
+    <ui:with type="com.google.gwt.i18n.client.NumberFormat" field="numberFormat"/>
+    <ui:with type="com.sencha.gxt.widget.core.client.form.NumberPropertyEditor" field="doublePropertyEditor"/>
 
     <ui:with type="com.sencha.gxt.widget.core.client.grid.ColumnModel" field="cm"/>
     <ui:with type="com.sencha.gxt.data.shared.ListStore" field="store"/>
@@ -25,14 +37,34 @@
     <container:FlowLayoutContainer>
         <tabs:TabPanel ui:field="folder" width="100%" addStyleNames="margin-10" tabScroll="true">
             <tabs:child config="{mainTabConfig}">
-                <my:LineExample ui:field="chart"/>
+                <container:VerticalLayoutContainer width="100%" height="100%">
+                    <my:LineExample ui:field="chart"/>
+                </container:VerticalLayoutContainer>
             </tabs:child>
 
             <tabs:child config="{dataTabConfig}">
                 <container:FlowLayoutContainer scrollMode="ALWAYS">
-                    <grid:Grid store="{store}" cm="{cm}" view="{view}" ui:field="dataTable"  />
+                    <grid:Grid store="{store}" cm="{cm}" view="{view}" ui:field="dataTable"/>
                 </container:FlowLayoutContainer>
             </tabs:child>
         </tabs:TabPanel>
+
+            <container:HorizontalLayoutContainer>
+                <toolbar:LabelToolItem label="Среднемакс. температура"/>
+                <toolbar:LabelToolItem label="" width="30"/>
+                <toolbar:LabelToolItem ui:field="avgTemp" label="00" styleName="{style.svTempText}"/>
+                <toolbar:LabelToolItem label="" width="30"/>
+                <toolbar:LabelToolItem label="Максимальная температура"/>
+                <toolbar:LabelToolItem label="" width="30"/>
+                <toolbar:LabelToolItem ui:field="maxTemp" label="00" styleName="{style.svTempText}"/>
+                <toolbar:LabelToolItem label="" width="30"/>
+                <toolbar:LabelToolItem label="Задать время обновления"/>
+                <form:NumberField editor="{doublePropertyEditor}" allowBlank="false" allowNegative="false"
+                                  ui:field="tickField" text="1.0" width="60"/>
+                <toolbar:LabelToolItem label="Задать среднюю температуру"/>
+                <form:NumberField editor="{doublePropertyEditor}" allowBlank="false" allowNegative="false"
+                                  ui:field="tempField" text="950.0" width="60"/>
+                <button:TextButton text="Начать эмуляцию" ui:field="startButton"/>
+            </container:HorizontalLayoutContainer>
     </container:FlowLayoutContainer>
 </ui:UiBinder>

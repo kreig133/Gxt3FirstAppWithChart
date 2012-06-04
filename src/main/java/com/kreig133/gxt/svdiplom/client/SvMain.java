@@ -17,10 +17,16 @@ import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
 import com.sencha.gxt.widget.core.client.ContentPanel;
+import com.sencha.gxt.widget.core.client.button.TextButton;
+import com.sencha.gxt.widget.core.client.event.SelectEvent;
+import com.sencha.gxt.widget.core.client.form.NumberField;
+import com.sencha.gxt.widget.core.client.form.NumberPropertyEditor;
+import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
 import com.sencha.gxt.widget.core.client.grid.GridView;
+import com.sencha.gxt.widget.core.client.toolbar.LabelToolItem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +45,10 @@ public class SvMain extends Composite{
     Double[] filteredTemp = new Double[ 80 ];
 
     @UiField(provided = true)
+    NumberFormat numberFormat = NumberFormat.getFormat("0.00");
+    @UiField(provided = true)
+    NumberPropertyEditor<Double> doublePropertyEditor = new NumberPropertyEditor.DoublePropertyEditor();
+    @UiField(provided = true)
     ListStore<Data> store;
     @UiField(provided = true)
     ColumnModel<Data> cm;
@@ -48,6 +58,16 @@ public class SvMain extends Composite{
     Grid dataTable;
     @UiField
     LineExample chart;
+    @UiField
+    NumberField<Double> tempField;
+    @UiField
+    TextButton startButton;
+    @UiField
+    NumberField<Double> tickField;
+    @UiField
+    LabelToolItem avgTemp;
+    @UiField
+    LabelToolItem maxTemp;
 
     private final int MAX_COUNT = 80;;
 
@@ -71,16 +91,26 @@ public class SvMain extends Composite{
         }
         cm = new ColumnModel<Data>( list );
         initWidget( uiBinder.createAndBindUi( this ) );
-
-        startEmulation( 950.0 );
+        startButton.addSelectHandler( new SelectEvent.SelectHandler() {
+            @Override
+            public void onSelect( SelectEvent event ) {
+                dataTable.getStore().clear();
+                startButton.setEnabled( false );
+                startEmulation( tempField.getCurrentValue(), tickField.getCurrentValue() );
+            }
+        } );
     }
 
     private int count = 0;
-    private void startEmulation( Double temp ) {
+    private void startEmulation( Double temp, Double tick ) {
         count = 0;
         final Generator generator = new Generator( temp );
         for ( int i = 0; i < filteredTemp.length; i++ ) {
             filteredTemp[ i ] = Double.MAX_VALUE;
+        }
+
+        for ( int i=0; i < 5; i++ ) {
+            generator.next();
         }
 
         Timer timer = new Timer() {
@@ -91,13 +121,29 @@ public class SvMain extends Composite{
                     dataTable.getStore().add( next );
                     filterTemp( next );
                     chart.updateChart( convertForChart( next ) );
+                    updateTemp();
                 } else {
                     cancel();
+                    startButton.setEnabled( true );
                 }
                 count++;
             }
         };
-        timer.scheduleRepeating( 1000 );
+        timer.scheduleRepeating( ( int ) (tick * 1000) );
+    }
+
+    private void updateTemp() {
+        Double max = Double.MIN_VALUE;
+        Double avg = 0.0;
+        for ( int i = 0; i < filteredTemp.length; i++ ) {
+            avg += filteredTemp[ i ];
+            if ( filteredTemp[ i ] > max ) {
+                max = filteredTemp[ i ];
+            }
+        }
+        avg /= filteredTemp.length;
+        avgTemp.setLabel( Integer.toString( avg.intValue() ) );
+        maxTemp.setLabel( Integer.toString( max.intValue() ) );
     }
 
     private void filterTemp( Data next ) {

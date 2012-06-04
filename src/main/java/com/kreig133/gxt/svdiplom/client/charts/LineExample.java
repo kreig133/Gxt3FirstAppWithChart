@@ -24,6 +24,7 @@ import com.sencha.gxt.chart.client.draw.sprite.Sprite;
 import com.sencha.gxt.chart.client.draw.sprite.TextSprite;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.widget.core.client.ContentPanel;
+import com.sencha.gxt.widget.core.client.Resizable;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer;
 import com.sencha.gxt.widget.core.client.container.VerticalLayoutContainer.VerticalLayoutData;
 
@@ -33,6 +34,7 @@ public class LineExample implements IsWidget {
 
     private static final DataProperties dataAccess = GWT.create(DataProperties.class);
     private Chart<Data> chart;
+    private int MAX_PADDLE_ON_CHART = 20;
 
     @Override
     public Widget asWidget() {
@@ -70,7 +72,7 @@ public class LineExample implements IsWidget {
         axisX.setDisplayGrid( true );
         axisX.setGridOddConfig( odd );
         axisX.setMinimum( 0 );
-        axisX.setMaximum( 80 );
+        axisX.setMaximum( MAX_PADDLE_ON_CHART );
 
         Sprite marker = Primitives.square(0, 0, 6);
         marker.setFill(new RGB(194,0,36));
@@ -93,7 +95,7 @@ public class LineExample implements IsWidget {
         series3.setStroke(new RGB(32, 68, 186));
         series3.setShowMarkers(true);
         series3.setSmooth(true);
-        series3.setFill(new RGB(32, 68, 186));
+//        series3.setFill(new RGB(32, 68, 186));
         marker = Primitives.diamond(0, 0, 6);
         marker.setFill(new RGB(32, 68, 186));
         series3.setMarkerConfig(marker);
@@ -118,13 +120,19 @@ public class LineExample implements IsWidget {
 
         ContentPanel panel = new ContentPanel();
         panel.getElement().getStyle().setMargin( 10, Unit.PX );
-        panel.setCollapsible(true);
+        panel.setCollapsible( true );
         panel.setHeadingText( "Line Chart" );
-        panel.setPixelSize( 620, 500 );
+        panel.setPixelSize( 1000, 500 );
         panel.setBodyBorder( true );
+
+
 
         VerticalLayoutContainer layout = new VerticalLayoutContainer();
         panel.add( layout );
+
+        Resizable resize = new Resizable(panel);
+        resize.setMinHeight(400);
+        resize.setMinWidth(400);
 
         chart.setLayoutData( new VerticalLayoutData( 1, 1 ) );
         layout.add( chart );
@@ -134,7 +142,7 @@ public class LineExample implements IsWidget {
 
     public void updateChart( List<Data> data ) {
         chart.getStore().clear();
-        chart.getStore().addAll( data );
+        chart.getStore().addAll( data.subList( 0, MAX_PADDLE_ON_CHART ) );
         chart.redrawChart();
     }
 }
