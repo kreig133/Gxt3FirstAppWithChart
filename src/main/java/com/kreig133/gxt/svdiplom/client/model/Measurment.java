@@ -27,13 +27,4 @@ public class Measurment {
     public boolean isWithNoise() {
         return withNoise;
     }
-
-    @Override
-    public String toString() {
-        return "Measurment{" +
-                "time=" + time +
-                ", temp=" + temp +
-                ", withNoise=" + withNoise +
-                '}';
-    }
 }

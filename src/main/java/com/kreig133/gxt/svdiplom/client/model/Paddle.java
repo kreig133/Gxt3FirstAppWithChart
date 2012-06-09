@@ -34,10 +34,10 @@ public class Paddle {
     public Double next(){
         amplitude = gAmplitude.next();
 
-        if (  endNoise <= generator.currentTime ) {
+        if ( endNoise <= generator.currentTime ) {
             startNoise = generator.currentTime + ( 1000.0 / gFrequency.next() );
-            amplitude = gAmplitude.next();
-            endNoise = startNoise + gDuration.next();
+            amplitude  = gAmplitude.next();
+            endNoise   = startNoise + gDuration.next();
         }
 
         final boolean withNoise = ( startNoise <= generator.currentTime ) && ( generator.currentTime <= endNoise );

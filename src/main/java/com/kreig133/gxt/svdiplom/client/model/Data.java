@@ -8,6 +8,7 @@ import java.util.List;
  * @version 1.0
  */
 public class Data implements Serializable {
+
     private Double time;
     private List<Double> measures;
 

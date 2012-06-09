@@ -17,6 +17,7 @@
             border: black solid;
         }
     </ui:style>
+
     <ui:with type="com.sencha.gxt.widget.core.client.TabItemConfig" field="mainTabConfig">
         <ui:attributes text="Графики"/>
     </ui:with>

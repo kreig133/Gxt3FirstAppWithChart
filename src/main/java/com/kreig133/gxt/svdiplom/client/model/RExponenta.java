@@ -2,10 +2,6 @@ package com.kreig133.gxt.svdiplom.client.model;
 
 import java.util.Random;
 
-/**
- * @author kreig133
- * @version 1.0
- */
 public class RExponenta {
     private Random rand = new Random();
 

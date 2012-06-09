@@ -1,10 +1,3 @@
-/**
- * Sencha GXT 3.0.0 - Sencha for GWT
- * Copyright(c) 2007-2012, Sencha, Inc.
- * licensing@sencha.com
- *
- * http://www.sencha.com/products/gxt/license/
- */
 package com.kreig133.gxt.svdiplom.client.charts;
 
 import com.google.gwt.core.client.GWT;
@@ -33,7 +26,9 @@ import java.util.List;
 public class LineExample implements IsWidget {
 
     private static final DataProperties dataAccess = GWT.create(DataProperties.class);
+
     private Chart<Data> chart;
+
     private int MAX_PADDLE_ON_CHART = 20;
 
     @Override
@@ -95,12 +90,10 @@ public class LineExample implements IsWidget {
         series3.setStroke(new RGB(32, 68, 186));
         series3.setShowMarkers(true);
         series3.setSmooth(true);
-//        series3.setFill(new RGB(32, 68, 186));
         marker = Primitives.diamond(0, 0, 6);
         marker.setFill(new RGB(32, 68, 186));
         series3.setMarkerConfig(marker);
         series3.setHighlighting(true);
-
 
         final Legend<Data> legend = new Legend<Data>();
         legend.setPosition( Position.RIGHT );
@@ -117,15 +110,12 @@ public class LineExample implements IsWidget {
         chart.addSeries( series2 );
         chart.setLegend( legend );
 
-
         ContentPanel panel = new ContentPanel();
         panel.getElement().getStyle().setMargin( 10, Unit.PX );
         panel.setCollapsible( true );
         panel.setHeadingText( "Line Chart" );
         panel.setPixelSize( 1000, 500 );
         panel.setBodyBorder( true );
-
-
 
         VerticalLayoutContainer layout = new VerticalLayoutContainer();
         panel.add( layout );

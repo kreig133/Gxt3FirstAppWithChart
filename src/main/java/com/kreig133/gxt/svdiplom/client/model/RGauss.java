@@ -2,9 +2,6 @@ package com.kreig133.gxt.svdiplom.client.model;
 
 import java.util.Random;
 
-/**
- * @author kreig133
- */
 public class RGauss {
 
     private Random rand = new Random();

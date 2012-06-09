@@ -6,7 +6,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.kreig133.gxt.svdiplom.client.charts.LineExample;
 import com.kreig133.gxt.svdiplom.client.model.Data;
@@ -16,12 +15,10 @@ import com.sencha.gxt.cell.core.client.NumberCell;
 import com.sencha.gxt.core.client.ValueProvider;
 import com.sencha.gxt.data.shared.ListStore;
 import com.sencha.gxt.data.shared.ModelKeyProvider;
-import com.sencha.gxt.widget.core.client.ContentPanel;
 import com.sencha.gxt.widget.core.client.button.TextButton;
 import com.sencha.gxt.widget.core.client.event.SelectEvent;
 import com.sencha.gxt.widget.core.client.form.NumberField;
 import com.sencha.gxt.widget.core.client.form.NumberPropertyEditor;
-import com.sencha.gxt.widget.core.client.form.TextField;
 import com.sencha.gxt.widget.core.client.grid.ColumnConfig;
 import com.sencha.gxt.widget.core.client.grid.ColumnModel;
 import com.sencha.gxt.widget.core.client.grid.Grid;
@@ -29,7 +26,6 @@ import com.sencha.gxt.widget.core.client.grid.GridView;
 import com.sencha.gxt.widget.core.client.toolbar.LabelToolItem;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,11 +34,13 @@ import java.util.List;
  */
 public class SvMain extends Composite{
 
+    private final int MAX_COUNT = 80;
+
     interface SvMainWidgetUiBinder extends UiBinder<Widget, SvMain> { }
 
     private static SvMainWidgetUiBinder uiBinder = GWT.create( SvMainWidgetUiBinder.class );
 
-    Double[] filteredTemp = new Double[ 80 ];
+    Double[] filteredTemp = new Double[ MAX_COUNT ];
 
     @UiField(provided = true)
     NumberFormat numberFormat = NumberFormat.getFormat("0.00");
@@ -55,7 +53,7 @@ public class SvMain extends Composite{
     @UiField
     GridView view;
     @UiField
-    Grid dataTable;
+    Grid<Data> dataTable;
     @UiField
     LineExample chart;
     @UiField
@@ -69,7 +67,6 @@ public class SvMain extends Composite{
     @UiField
     LabelToolItem maxTemp;
 
-    private final int MAX_COUNT = 80;;
 
     public SvMain() {
         store = new ListStore<Data>(new ModelKeyProvider<Data>() {
@@ -78,9 +75,10 @@ public class SvMain extends Composite{
                 return o.toString();
             }
         } );
+
         DataProperties dataProperties = GWT.create( DataProperties.class );
-        ColumnConfig<Data, Double> columnConfig = new ColumnConfig<Data, Double>( dataProperties.time(), 60,
-                "Время" );
+
+        ColumnConfig<Data, Double> columnConfig = new ColumnConfig<Data, Double>( dataProperties.time(), 60, "Время" );
         columnConfig.setCell( new NumberCell<Double>( NumberFormat.getFormat( "#0.00" ) ) );
 
         List<ColumnConfig<Data, ?>> list = new ArrayList<ColumnConfig<Data, ?>>();
@@ -90,7 +88,9 @@ public class SvMain extends Composite{
             list.add( new MeasureColumnConfig( i ) );
         }
         cm = new ColumnModel<Data>( list );
+
         initWidget( uiBinder.createAndBindUi( this ) );
+
         startButton.addSelectHandler( new SelectEvent.SelectHandler() {
             @Override
             public void onSelect( SelectEvent event ) {
@@ -101,7 +101,7 @@ public class SvMain extends Composite{
         } );
     }
 
-    private int count = 0;
+    private int count;
     private void startEmulation( Double temp, Double tick ) {
         count = 0;
         final Generator generator = new Generator( temp );
@@ -117,19 +117,28 @@ public class SvMain extends Composite{
             @Override
             public void run() {
                 if ( count < 100 ) {
-                    Data next = generator.next();
-                    dataTable.getStore().add( next );
-                    filterTemp( next );
-                    chart.updateChart( convertForChart( next ) );
-                    updateTemp();
+                    generateNextStepOfEmulation( generator );
                 } else {
-                    cancel();
-                    startButton.setEnabled( true );
+                    stopEmulation( this );
                 }
                 count++;
             }
         };
+
         timer.scheduleRepeating( ( int ) (tick * 1000) );
+    }
+
+    private void generateNextStepOfEmulation( Generator generator ) {
+        Data next = generator.next();
+        dataTable.getStore().add( next );
+        filterTemp( next );
+        chart.updateChart( convertForChart( next ) );
+        updateTemp();
+    }
+
+    private void stopEmulation( Timer timer ) {
+        timer.cancel();
+        startButton.setEnabled( true );
     }
 
     private void updateTemp() {
